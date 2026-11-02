@@ -1,0 +1,34 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: realtime-collab:latest
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./Backend/.env
+
+  auth-email-worker:
+    image: realtime-collab:latest
+    command: ["node", "src/queues/workers/authEmail.worker.js"]
+    env_file:
+      - ./Backend/.env
+
+  notification-worker:
+    image: realtime-collab:latest
+    command: ["node", "src/queues/workers/notification.worker.js"]
+    env_file:
+      - ./Backend/.env
+
+  reminder-worker:
+    image: realtime-collab:latest
+    command: ["node", "src/queues/workers/reminder.worker.js"]
+    env_file:
+      - ./Backend/.env
+
+  reindex-worker:
+    image: realtime-collab:latest
+    command: ["node", "src/queues/workers/reindex.worker.js"]
+    env_file:
+      - ./Backend/.env

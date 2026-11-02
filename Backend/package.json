@@ -1,0 +1,36 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "dev": "npx nodemon server.js",
+    "start": "node server.js",
+    "worker:authEmail": "node src/queues/workers/authEmail.worker.js",
+    "worker:notification": "node src/queues/workers/notification.worker.js",
+    "worker:reminder": "node src/queues/workers/reminder.worker.js",
+    "worker:reindex": "node src/queues/workers/reindex.worker.js"
+  },
+  "keywords": [],
+  "author": "Fahad",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@socket.io/redis-adapter": "^8.3.0",
+    "bcrypt": "^6.0.0",
+    "bullmq": "^6.3.16",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.4",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "ioredis": "^6.0.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.10.3",
+    "morgan": "^1.12.1",
+    "nodemailer": "^10.0.13",
+    "redis": "^6.3.0",
+    "socket.io": "^4.8.4",
+    "zod": "^4.6.7"
+  }
+}
