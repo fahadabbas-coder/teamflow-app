@@ -1,0 +1,15 @@
+# TeamFlow
+
+Real-time collaboration platform.
+
+## Main Features
+
+- Project management
+- Task management
+- Real-time collaboration
+
+## Important Pages
+
+- [Home](/)
+- [Project](/projects)
+- [Project dashboard](/projects/:id/dashboard)

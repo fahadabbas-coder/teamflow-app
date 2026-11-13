@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "name": "TeamFlow",
+  "description": "Project management app for teams",
+  "resources": [
+    {
+      "type": "website",
+      "url": "http://localhost:3000/",
+      "name": "TeamFlow",
+      "description": "Real-time project management and team collaboration board"
+    },
+    {
+      "type": "api",
+      "url": "http://localhost:3000/api/",
+      "name": "TeamFlow API",
+      "description": "REST API for projects, tasks, notifications, and dashboard"
+    },
+    {
+      "type": "documentation",
+      "url": "http://localhost:3000/docs/",
+      "name": "TeamFlow Documentation",
+      "description": "API and integration documentation"
+    }
+  ],
+  "tools": [
+    { "name": "listProjects", "description": "List all projects for the authenticated user", "endpoint": "/api/projects", "method": "GET" },
+    { "name": "getDashboard", "description": "Get personal dashboard data", "endpoint": "/api/dashboard/me", "method": "GET" },
+    { "name": "listNotifications", "description": "List user notifications", "endpoint": "/api/notifications", "method": "GET" }
+  ]
+}
