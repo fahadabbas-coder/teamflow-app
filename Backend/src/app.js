@@ -17,11 +17,12 @@ const { taskActivityRouter, projectActivityRouter } = require("./routes/activity
 const { rateLimit } = require("./middleware/rateLimit.middleware")
 
 const app = express()
+app.set("trust proxy", 1)
 
 const apiLimiter = rateLimit({ name: "api", windowSec: 60, max: 100 })
 
 app.use(helmet())
-app.use(morgan('dev'))
+app.use("/api", morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"))
 
 // Nonce middleware for CSP — unique per request (MUST run before CSP header)
 app.use((_req, res, next) => {
@@ -63,6 +64,15 @@ if (process.env.NODE_ENV !== "production") {
 }
 app.use(express.json({ limit: "2mb" }))
 app.use(cookieParser())
+
+// Health Check API
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    message: 'Server is awake and running!',
+    timestamp: new Date().toISOString()
+  });
+});
 
 
 app.use("/api", apiLimiter)

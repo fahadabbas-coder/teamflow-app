@@ -1,42 +1,65 @@
-const nodemailer = require("nodemailer")
+const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
 
+// OAuth2 configuration
+const oauth2Client = new google.auth.OAuth2(
+  process.env.CLIENT_ID,
+  process.env.CLIENT_SECRET,
+  "https://google.com" // Optional but recommended
+);
+
+oauth2Client.setCredentials({
+  refresh_token: process.env.REFRESH_TOKEN,
+});
+
+// Gmail API client
+const gmail = google.gmail({
+  version: "v1",
+  auth: oauth2Client,
+});
+
+// Nodemailer MIME generator
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        type: 'OAuth2',
-        user: process.env.EMAIL_USER,
-        clientId: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
-        refreshToken: process.env.REFRESH_TOKEN,
-    },
-})
+  streamTransport: true,
+  buffer: true,
+  newline: "windows", // Standard CRLF for emails
+});
 
-// Verify the connection configuration
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('Error connecting to email server:', error)
-    } else {
-        console.log('Email server is ready to send messages')
-    }
-})
-
-// Function to send email
+// Send email using Gmail API
 const sendEmail = async (to, subject, text, html) => {
-    try {
-        const info = await transporter.sendMail({
-            from: `"Real-Time Collaboration" <${process.env.EMAIL_USER}>`, // sender address
-            to, // list of receivers
-            subject, // Subject line
-            text, // plain text body
-            html, // html body
-        });
+  try {
+    const info = await transporter.sendMail({
+      from: `"Real-Time Collaboration" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      text,
+      html,
+    });
 
-        console.log('Message sent: %s', info.messageId);
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    } catch (error) {
-        console.error('Error sending email:', error);
-    }
+    // Convert MIME message to Base64URL 
+    const raw = info.message.toString("base64url");
+
+    // Send through Gmail API over HTTPS
+    const response = await gmail.users.messages.send({
+      userId: "me",
+      requestBody: { raw },
+    });
+
+    console.log("Email sent successfully:", response.data.id);
+    return {
+      messageId: response.data.id,
+      threadId: response.data.threadId,
+    };
+  } catch (error) {
+    console.error("Gmail API email sending failed:", {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+    });
+
+    // Propagate error to BullMQ for retries
+    throw error;
+  }
 };
 
-module.exports=sendEmail
-
+module.exports = sendEmail;

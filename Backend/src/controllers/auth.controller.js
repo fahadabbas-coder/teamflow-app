@@ -39,6 +39,7 @@ async function register(req, res) {
             await emailQueue.add("verify-email-otp", { email, otp, html })
         } catch (queueErr) {
             console.error("Queue failed:", queueErr.message)
+            throw queueErr
         }
 
         return res.status(201).json({
@@ -70,7 +71,7 @@ async function verifyEmail(req, res) {
         const user = await userModel.findOneAndUpdate(
             { email },
             { isVerified: true },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!user) {
@@ -114,6 +115,7 @@ async function resendOtp(req, res) {
             await emailQueue.add("resend-email-otp", { email, otp, html })
         } catch (queueErr) {
             console.error("Queue failed:", queueErr.message)
+            throw queueErr
         }
 
         res.status(200).json({ message: "OTP sent successfully" })
@@ -211,6 +213,7 @@ async function forgetPassword(req, res) {
             await emailQueue.add("forget-email-otp", { email, otp, html })
         } catch (queueErr) {
             console.error("Queue failed:", queueErr.message)
+            throw queueErr
         }
 
         res.status(200).json({
@@ -300,6 +303,7 @@ async function resetPassword(req, res) {
             await emailQueue.add("password-changed-successfully-email", { email: user.email, html })
         } catch (queueErr) {
             console.error("Queue failed:", queueErr.message)
+            throw queueErr
         }
 
         return res.status(200).json({
