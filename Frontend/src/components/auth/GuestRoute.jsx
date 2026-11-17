@@ -5,7 +5,7 @@ import { useAuthStore } from "../../stores/authStore"
 // Agar user pehle se logged in hai → home par redirect 
 // Auth state loading ho → redirect mat karo, skeleton dikhao
 
-export default function GuestRoute({ children }) {
+export default function GuestRoute() {
     const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
     const isInitialized   = useAuthStore((s) => s.isInitialized)
 

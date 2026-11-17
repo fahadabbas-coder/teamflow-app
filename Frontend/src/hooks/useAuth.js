@@ -15,21 +15,14 @@ export function useAuth() {
     const clearAuth = useAuthStore((s) => s.clearAuth)
     const setInitialized = useAuthStore((s) => s.setInitialized)
 
-    // APP BOOT — sirf refresh cookie se access token wapas lata hai .
+    // APP BOOT — refresh cookie se access token wapas lata hai.
     // get-me background me chalta hai, rendering block nahi karta.
-    // Guest routes (/login, /register, etc.) par refresh-token NAHI call kiya —
-    // warna 401 hota hai aur console error aata hai.
-
-    const GUEST_PATHS = ['/login', '/register', '/verifyemail', '/forgetpassword']
+    // Yeh sab routes par chalta hai (login/register bhi) taak jo user
+    // pehle se logged-in hai aur /login ka URL type kare, usse home par redirect kiya ja sake.
+    // Agar koi session nahi hai to bootstrapAuth null return karega aur login page dikhayi degi.
 
     useEffect(() => {
         if (isInitialized) return
-
-        // Guest route par auth boot skip karo
-        if (GUEST_PATHS.includes(window.location.pathname)) {
-            setInitialized()
-            return
-        }
 
         async function boot() {
             const token = await bootstrapAuth()
